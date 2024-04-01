@@ -1,17 +1,34 @@
+import os
+import subprocess
+import sys
+import pytest
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.service import Service as FirefoxService
 
-options = Options()
-options.headless = True
-service = Service(executable_path='/usr/local/bin/geckodriver', log_path='procesverloop/Seleniumtester/logs/geckodriver.log')
-service.start()
+# Test running Firefox in headless mode
+def test_arguments():
+    options = webdriver.FirefoxOptions()
+    options.add_argument("-headless")  # Run in headless mode
 
-driver = webdriver.Firefox(service=service, options=options)
+    driver = webdriver.Firefox(options=options)
+    driver.get("https://www.nu.nl")  # Open a website to verify headless mode works
+    assert "Example Domain" in driver.title  # Simple assertion to check the page title
+    driver.quit()
 
-# Navigate to a website and print its title
-try:
-    driver.get("http://nu.nl")
-    print(driver.title)
-finally:
+# Test logging service output to a file
+@pytest.fixture
+def log_path(tmp_path):
+    return tmp_path / "geckodriver.log"
+
+def test_log_to_file(log_path):
+    service = FirefoxService(log_path=str(log_path), service_args=['--log', 'debug'])
+
+    driver = webdriver.Firefox(service=service)
+    driver.get("https://www.selenium.dev")  # Navigate to a page
+
+    # Check the log file for a specific log entry to verify logging works
+    with open(log_path, 'r') as fp:
+        log_content = fp.read()
+        assert "geckodriver	INFO	Listening on" in log_content
+
     driver.quit()
