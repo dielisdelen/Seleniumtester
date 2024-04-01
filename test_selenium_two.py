@@ -4,7 +4,7 @@ from selenium.webdriver.firefox.service import Service
 
 options = Options()
 options.headless = True
-service = Service(executable_path='/path/to/geckodriver', log_path='/path/to/geckodriver.log')
+service = Service(executable_path='/usr/local/bin/geckodriver', log_path='procesverloop/Seleniumtester/logs/geckodriver.log')
 service.start()
 
 driver = webdriver.Firefox(service=service, options=options)
