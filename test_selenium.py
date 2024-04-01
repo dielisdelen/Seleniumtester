@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 
 options = webdriver.FirefoxOptions()
 
